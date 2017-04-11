@@ -22,12 +22,10 @@
                 var splitParams = repoLink.split('/')
                 // Ignore the first 3 elements which store
                 // 'https:' and 'github.com'
-                var userName = splitParams[3];
-                var repoName = splitParams[4];
+                var owner = splitParams[3];
+                var repo = splitParams[4];
 
-                $.githubUser(userName, function(data) {
-                    console.log(data);
-                })
+                api(allCommitsOfFile(owner, repo, 'index.html'));
             </script>
         </div>
     </body>
