@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Node modules
+/node_modules
+
+# Mac Files
+.DS_Store

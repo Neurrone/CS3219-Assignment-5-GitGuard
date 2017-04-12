@@ -1,0 +1,39 @@
+{
+  "name": "cs3219-assignment5-gitguard",
+  "version": "1.0.0",
+  "description": "A Github visualization tool",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --hot --host localhost"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neurrone/CS3219-Assignment-5-GitGuard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Neurrone/CS3219-Assignment-5-GitGuard/issues"
+  },
+  "homepage": "https://github.com/Neurrone/CS3219-Assignment-5-GitGuard#readme",
+  "dependencies": {
+    "css-loader": "^0.28.0",
+    "dotenv": "^4.0.0",
+    "elemental": "^0.6.1",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
+    "react": "^15.5.4",
+    "react-addons-css-transition-group": "^15.5.2",
+    "react-dom": "^15.5.4",
+    "style-loader": "^0.16.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2016": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "webpack": "^2.3.3",
+    "webpack-dev-server": "^2.4.2"
+  }
+}
