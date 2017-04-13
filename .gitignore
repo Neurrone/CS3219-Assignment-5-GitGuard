@@ -93,3 +93,4 @@ ENV/
 
 # Mac Files
 .DS_Store
+secrets.py
