@@ -14,14 +14,15 @@ class SearchPage extends React.Component {
         );
     };
 
-    submitRepoLink() {
+    submitRepoLink(e) {
+        e.preventDefault();
         this.props.onLinkSubmit();
     }
 
     render() {
         return (
             <Card id='card-container'>
-                <Form>
+                <Form onSubmit={this.submitRepoLink.bind(this)} >
                 <InputGroup contiguous>
                     <InputGroup.Section grow>
                         <FormInput autoFocus type='text' 
