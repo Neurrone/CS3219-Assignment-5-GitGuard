@@ -93,6 +93,8 @@ ENV/
 
 # Mac Files
 .DS_Store
+<<<<<<< HEAD
 
 # Authentication variables
 /utils/auth.js
+secrets.py
