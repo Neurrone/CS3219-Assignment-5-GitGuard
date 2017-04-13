@@ -21,11 +21,13 @@
     "dotenv": "^4.0.0",
     "elemental": "^0.6.1",
     "fs": "0.0.1-security",
+    "highcharts": "^5.0.10",
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
     "react": "^15.5.4",
     "react-addons-css-transition-group": "^15.5.2",
     "react-dom": "^15.5.4",
+    "react-highcharts": "^11.5.0",
     "react-router": "^4.1.0",
     "style-loader": "^0.16.1"
   },

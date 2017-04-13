@@ -1,16 +1,21 @@
 import React from 'react';
-import { Card, Table, Glyph } from 'elemental';
-import '../../node_modules/elemental/less/elemental.less';
+import Highcharts from 'highcharts';
+import ReactHighcharts from 'react-highcharts'
+
+// Import the components
+import ContributionCard from './ContributionCard.js';
 
 // Import the Github API calls and presets
 import * as api from '../utils/scrape.js';
 import * as presets from '../utils/presets.js';
+import * as configs from '../utils/chartconfigs.js';
 
 class StatsContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             results: [],
+            configList: [{}, {}, {}],
         };
     }
 
@@ -19,50 +24,30 @@ class StatsContainer extends React.Component {
             // Reset the submit prop to prevent continuous requerying
             this.props.onDataLoaded();
             // Call the APIs
-            api.api(presets.allInsDelOfRepo(this.props.owner, 
-                                            this.props.repo), 
+            api.api(presets.allContributionSum(this.props.owner, 
+                                               this.props.repo), 
                 json => {
                     this.setState({
                         results: json,
+                        configList: [
+                            configs.forCommitsByUser(json),
+                            configs.forAdditionsByUser(json),
+                            configs.forDeletionsByUser(json),
+                        ],
                     });
+                    // Remove the class appending display:none and show the data
+                    // after the asynchronous call to API
+                    const allCards = document.getElementsByClassName('card-stats');
+                    for (var i = 0; i < allCards.length; i++) {
+                        allCards[i].classList.remove('card-stats');
+                    }
                 });
         }
     }
 
     render() {
         return (
-            <Card id='card-container'>
-                <div>
-                    <Table>
-                        <colgroup>
-                            <col width='55%' />
-                            <col width='15%' />
-                            <col width='15%' />
-                            <col width='15%' />
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Commits</th>
-                                <th>Insertions</th>
-                                <th>Deletions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.results.map((obj) => {
-                                return (
-                                    <tr>
-                                        <td>{obj.author.login}</td>
-                                        <td>{obj.weeks[0].c}</td>
-                                        <td>{obj.weeks[0].a}</td>
-                                        <td>{obj.weeks[0].d}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </Table>
-                </div>
-            </Card>
+            <ContributionCard configList={this.state.configList} results={this.state.results} />
         );
     }
 }

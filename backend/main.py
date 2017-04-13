@@ -19,6 +19,11 @@ def get_contribution(owner, repo):
     response = github_api.make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
     return jsonify(response)
 
+@app.route('/<owner>/<repo>/collaborators', methods=['GET'])
+def get_collaborators(owner, repo):
+    response = github_api.make_request('repos/{}/{}/collaborators'.format(owner, repo))
+    return jsonify(response)
+
 # sums up the total contributions (additions, deletions and commits) for all contributors
 @app.route('/<owner>/<repo>/sum_contribution', methods=['GET'])
 def get_sum_contribution(owner, repo):
