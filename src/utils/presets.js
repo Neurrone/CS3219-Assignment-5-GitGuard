@@ -19,7 +19,7 @@ export const allCommitsOfRepoByUserInRange = (owner, repo, user, start, end) => 
 // See https://developer.github.com/v3/repos/statistics/
 // Can also be used to check by week
 export const allInsDelOfRepo = (owner, repo) => {
-    return '/repos/' + owner + '/' + repo + '/stats/contributors';
+    return owner + '/' + repo + '/contribution';
 };
 
 export const allCommitsOfFile = (owner, repo, filepath) => {

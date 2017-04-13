@@ -1,11 +1,9 @@
 import * as auth from './auth.js';
 
-// ======================================================================
-// API fetch call
-// ======================================================================
+// Authentication with Github API from frontend
 const paToken = auth.GIT_TOKEN;
 const paUser = auth.GIT_USER;
-const endPoint = 'https://api.github.com';
+const endPoint = 'http://localhost:5000/';
 
 const credentials = paUser + ':' + paToken;
 const authCred = btoa(credentials);
@@ -18,7 +16,7 @@ const options = {
 }
 
 export const api = (path, cb) => {
-    return fetch(endPoint + path, options)
+    return fetch(endPoint + path)
         .then(
             response => response.json(),
             err => console.error('Error fetching', err)
@@ -32,6 +30,8 @@ export const api = (path, cb) => {
         );
 }
 
+// Asynchronous handling of double API calls
+// Not used because python backend is synchronous
 export const apiTwoPaths = (path1, path2, cb) => {
     return fetch(endPoint + path1, options)
         .then(
