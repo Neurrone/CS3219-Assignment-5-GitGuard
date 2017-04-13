@@ -11,14 +11,16 @@ class App extends React.Component {
         this.state = {
             link: "",
             owner: "",
-            repo: ""
+            repo: "",
+            submit: 'false',
         };
     }
 
     updateStateLink(link) {
         console.log('Setting state to: ' + link);
         this.setState({
-            link: link
+            link: link,
+            submit: 'false',
         });
         // This displays wrong values because React's setState
         // method is asynchronous and does not immediately update
@@ -33,12 +35,18 @@ class App extends React.Component {
         const repo = link.split('/')[4];
         // Update the state with the owner and repo
         this.setState({
-            link: link,
             owner: owner,
-            repo: repo
+            repo: repo,
+            submit: 'true',
         });
         console.log('owner: ' + owner);
         console.log('repo: ' + repo);
+    }
+
+    updateSubmittedStatus() {
+        this.setState({
+            submit: 'false',
+        });
     }
 
     render() {
@@ -48,8 +56,10 @@ class App extends React.Component {
                     onLinkChange={this.updateStateLink.bind(this)} 
                     onLinkSubmit={this.submitRepoLink.bind(this)} />
                 
-                <StatsContainer owner={this.state.owner}
-                    repo={this.state.repo}/>
+                <StatsContainer submit={this.state.submit}
+                    owner={this.state.owner}
+                    repo={this.state.repo}
+                    onDataLoaded={this.updateSubmittedStatus.bind(this)} />
             </div>
         );
     }

@@ -93,3 +93,6 @@ ENV/
 
 # Mac Files
 .DS_Store
+
+# Authentication variables
+/utils/auth.js
