@@ -2,7 +2,7 @@ import requests
 import datetime
 import time
 
-from secrets import BOT_TOKEN, GIT_USER, GIT_TOKEN
+from secrets import GIT_USER, GIT_TOKEN
 
 def make_request(url):
     """Makes a request to a github url using a github API key for higher rate limits.
