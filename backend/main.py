@@ -5,7 +5,7 @@ from flask import Flask, jsonify, request, abort
 import flask_cors
 import requests
 
-import github_api as api
+import github_api
 
 app = Flask(__name__)
 flask_cors.CORS(app) # allow cross-origin requests (e.g. from frontend)
@@ -16,7 +16,7 @@ def splash():
 
 @app.route('/<owner>/<repo>/contribution', methods=['GET'])
 def get_contribution(owner, repo):
-    response = api.make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
+    response = github_api.make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
     return jsonify(response)
 
 if __name__ == "__main__":
