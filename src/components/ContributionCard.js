@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, Row, Col } from 'elemental';
+import { Card, Table, Row, Col, Button, Glyph } from 'elemental';
 import Highcharts from 'highcharts';
 import ReactHighcharts from 'react-highcharts'
 import '../../node_modules/elemental/less/elemental.less';
@@ -8,8 +8,11 @@ class ContributionCard extends React.Component {
     render() {
         return (
             <div className='card-stats'>
-                <Card id='card-container'>
-                    <h3>Contributor Data</h3>
+                <Card className='card-container'>
+                    <Row>
+                        <Col sm='1/2'><h3>Contributor Data</h3></Col>
+                        <Col sm='1/2' className='back-top'><a href='#card-input'>To Top</a></Col>
+                    </Row>
                     <Table>
                         <colgroup>
                             <col width='55%' />

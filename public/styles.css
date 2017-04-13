@@ -1,4 +1,4 @@
-#card-container {
+.card-container {
     width: 90%;
     margin-left: 5%;
     margin-right: 5%;
@@ -6,4 +6,8 @@
 
 .card-stats {
     display: none;
+}
+
+.back-top {
+    text-align: right;
 }

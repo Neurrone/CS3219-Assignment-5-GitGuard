@@ -21,7 +21,7 @@ class SearchPage extends React.Component {
 
     render() {
         return (
-            <Card id='card-container'>
+            <Card className='card-container' id='card-input'>
                 <Form onSubmit={this.submitRepoLink.bind(this)} >
                 <InputGroup contiguous>
                     <InputGroup.Section grow>
