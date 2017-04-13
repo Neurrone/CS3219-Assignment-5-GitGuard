@@ -14,25 +14,74 @@ class StatsContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            results: [],
-            configList: [{}, {}, {}],
+            updatedModalUser: false,
+            modalIsOpen: false,
+            modalUser: '',
+            allContributionSum: [],
+            allCommitsForUser: [],
+            configList: [
+                {}, {}, {}, {},
+            ],
         };
+    }
+
+    toggleModal() {
+        this.setState({
+            modalIsOpen: !this.state.modalIsOpen,
+            updatedModalUser: false,
+        });
+    }
+
+    toggleModalAndUser(login) {
+        this.setState({
+            updatedModalUser: true,
+            modalIsOpen: !this.state.modalIsOpen,
+            modalUser: login,
+        });
     }
 
     componentDidUpdate() {
         if (this.props.submit == 'true') {
             // Reset the submit prop to prevent continuous requerying
             this.props.onDataLoaded();
-            // Call the APIs
+            // Call the API for sum of contributions
             api.api(presets.allContributionSum(this.props.owner, 
                                                this.props.repo), 
                 json => {
+                    console.log(configs.forCommitsByUser(json));
                     this.setState({
-                        results: json,
+                        allContributionSum: json,
                         configList: [
                             configs.forCommitsByUser(json),
                             configs.forAdditionsByUser(json),
                             configs.forDeletionsByUser(json),
+                            this.state.configList[3],
+                        ],
+                    });
+                    // Remove the class appending display:none and show the data
+                    // after the asynchronous call to API
+                    const allCards = document.getElementsByClassName('card-stats');
+                    for (var i = 0; i < allCards.length; i++) {
+                        allCards[i].classList.remove('card-stats');
+                    }
+                });
+        }
+
+        // Call the API for commits per day for user
+        // Only make this API call when modalUser has been set
+        if (this.state.updatedModalUser) {
+            api.api(presets.allCommitsOfRepoForUser(this.props.owner, 
+                                                    this.props.repo,
+                                                    this.state.modalUser), 
+                json => {
+                    this.setState({
+                        updatedModalUser: false,
+                        allCommitsForUser: json,
+                        configList: [
+                            this.state.configList[0],
+                            this.state.configList[1],
+                            this.state.configList[2],
+                            configs.forCommitHistoryOfUser(json),
                         ],
                     });
                     // Remove the class appending display:none and show the data
@@ -47,7 +96,12 @@ class StatsContainer extends React.Component {
 
     render() {
         return (
-            <ContributionCard configList={this.state.configList} results={this.state.results} />
+            <ContributionCard configList={this.state.configList} 
+                allContributionSum={this.state.allContributionSum}
+                modalIsOpen={this.state.modalIsOpen}
+                modalUser={this.state.modalUser}
+                toggleModal={this.toggleModal.bind(this)}
+                toggleModalAndUser={this.toggleModalAndUser.bind(this)}  />
         );
     }
 }

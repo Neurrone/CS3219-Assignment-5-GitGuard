@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, Row, Col, Button, Glyph } from 'elemental';
+import { Card, Table, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'elemental';
 import Highcharts from 'highcharts';
 import ReactHighcharts from 'react-highcharts'
 import '../../node_modules/elemental/less/elemental.less';
@@ -9,10 +9,7 @@ class ContributionCard extends React.Component {
         return (
             <div className='card-stats'>
                 <Card className='card-container'>
-                    <Row>
-                        <Col sm='1/2'><h3>Contributor Data</h3></Col>
-                        <Col sm='1/2' className='back-top'><a href='#card-input'>To Top</a></Col>
-                    </Row>
+                    <h3>Contributor Data</h3>
                     <Table>
                         <colgroup>
                             <col width='55%' />
@@ -24,15 +21,15 @@ class ContributionCard extends React.Component {
                             <tr>
                                 <th>Username</th>
                                 <th>Commits</th>
-                                <th>Insertions</th>
+                                <th>Additions</th>
                                 <th>Deletions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.results.map((obj, i) => {
+                            {this.props.allContributionSum.map((obj, i) => {
                                 return (
                                     <tr key={i}>
-                                        <td>{obj.login}</td>
+                                        <td><a onClick={() => this.props.toggleModalAndUser(obj.login)}>{obj.login}</a></td>
                                         <td>{obj.commits}</td>
                                         <td>{obj.additions}</td>
                                         <td>{obj.deletions}</td>
@@ -55,7 +52,20 @@ class ContributionCard extends React.Component {
                             <Card><ReactHighcharts config={this.props.configList[2]}></ReactHighcharts></Card>
                         </Col>
                     </Row>
+                    <div className='back-top'>
+                        <a href='#card-input'>To Top</a>
+                    </div>
                 </Card>
+                <Modal isOpen={this.props.modalIsOpen} 
+                    onCancel={this.props.toggleModal} width='large'>
+                    <ModalHeader text='Commit History' showCloseButton onClose={this.props.toggleModal} />
+                    <ModalBody>
+                        <ReactHighcharts config={this.props.configList[3]}></ReactHighcharts>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button onClick={this.props.toggleModal}>Close</Button>
+                    </ModalFooter>
+                </Modal>
             </div>
         );
     }

@@ -6,20 +6,9 @@ export const allCollaboratorsOfRepo = (owner, repo) => {
     return '/repos/' + owner + '/' + repo + '/collaborators';
 };
 
-export const allCommitsOfRepoByUser = (owner, repo, user) => {
-    return '/repos/' + owner + '/' + repo + '/commits?author=' + user;
-};
-
 export const allCommitsOfRepoByUserInRange = (owner, repo, user, start, end) => {
     return '/repos/' + owner + '/' + repo + '/commits?author=' + user + 
            '&?since=' + start + '&?until=' + end;
-};
-
-// Requires further processing
-// See https://developer.github.com/v3/repos/statistics/
-// Can also be used to check by week
-export const allContributionSum = (owner, repo) => {
-    return owner + '/' + repo + '/sum_contribution';
 };
 
 export const allCommitsOfFile = (owner, repo, filepath) => {
@@ -30,4 +19,17 @@ export const allCommitsOfFile = (owner, repo, filepath) => {
 // http://stackoverflow.com/questions/563406/add-days-to-javascript-date
 export const allCollaboratorsOfRepoInLastWeek = (owner, repo, lastweek) => {
     return '/repos/' + owner + '/' + repo + '/collaborators?since=' + lastweek;
+};
+
+// Adapted for Backend
+
+// Requires further processing
+// See https://developer.github.com/v3/repos/statistics/
+// Can also be used to check by week
+export const allContributionSum = (owner, repo) => {
+    return owner + '/' + repo + '/sum_contribution';
+};
+
+export const allCommitsOfRepoForUser = (owner, repo, user) => {
+    return owner + '/' + repo + '/' + user + '/commits_for_user';
 };

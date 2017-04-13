@@ -24,6 +24,27 @@ def get_collaborators(owner, repo):
     response = github_api.make_request('repos/{}/{}/collaborators'.format(owner, repo))
     return jsonify(response)
 
+@app.route('/<owner>/<repo>/<user>/commits_for_user', methods=['GET'])
+def get_commits_for_user(owner, repo, user):
+    response = github_api.make_request('repos/{}/{}/commits?author={}'.format(owner, repo, user))
+    commitList = [];
+
+    itrCount = 0;
+    for i in range (0, len(response)-1):
+        commitDate = response[i]['commit']['committer']['date'][:10];
+        count = 0;
+        for j in range (0, len(response)-1):
+            compDate = response[j]['commit']['committer']['date'][:10];
+            if (commitDate == compDate):
+                i = j;
+                count += 1;
+        if (itrCount == i):
+            commit = {'date': commitDate, 'count': count};
+            commitList.append(commit);
+        itrCount += 1;
+
+    return jsonify(commitList);
+
 # sums up the total contributions (additions, deletions and commits) for all contributors
 @app.route('/<owner>/<repo>/sum_contribution', methods=['GET'])
 def get_sum_contribution(owner, repo):

@@ -123,3 +123,37 @@ export const forDeletionsByUser = (json) => {
         }],
     };
 }
+
+export const forCommitHistoryOfUser = (json) => {
+    return {
+        title: {
+            text: 'User Commit History',
+        },
+        subtitle: {
+            text: 'Commits per day',
+        },
+        yAxis: {
+            title: {
+                text: 'Commits'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        xAxis: {
+            categories: json.map((obj) => {
+                return obj.date;
+            }),
+        },
+        series: [
+            {
+                name: 'Commits',
+                data: json.map((obj) => {
+                    return obj.count;
+                }),
+            },
+        ]
+    };
+}
