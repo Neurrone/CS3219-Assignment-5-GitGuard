@@ -21,22 +21,38 @@ def get_contribution(owner, repo):
 
 @app.route('/<owner>/<repo>/sum_contribution', methods=['GET'])
 def get_sum_contribution(owner, repo):
-    response = api.make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
+    response = github_api.make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
     authorList = [];
 
-    for author in response:
-        authorName = author['author']['login'];
+    for set in response:
+        authorName = set['author']['login'];
         a = 0;
         d = 0;
         c = 0;
-        for week in author['weeks']:
+        for week in set['weeks']:
             a += week['a'];
             d += week['d'];
             c += week['c'];
         author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c}
-        print author;
         authorList.append(author);
-    return jsonify(response);
+    return jsonify(authorList);
+
+@app.route('/<owner>/<repo>/<login>/commit_history', methods=['GET'])
+def get_commit_history(owner, repo, login):
+    response = github_api.make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
+
+    for set in response:
+        if (login == set['author']['login']):
+            a = 0;
+            d = 0;
+            c = 0;
+            for week in set['weeks']:
+                a += week['a'];
+                d += week['d'];
+                c += week['c'];
+            author_commit_history = {'additions':a, 'deletions':d, 'commits':c}
+
+    return jsonify(author_commit_history);
 
 if __name__ == "__main__":
     app.run()
