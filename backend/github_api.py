@@ -32,35 +32,27 @@ def make_request(url_without_github_prefix):
 
     return r.json()
 
-def get_author_contributions(owner, repo):
-    """Returns the number of additions, commits and deletions for each author."""
+def get_author_contributions(owner, repo, start_time=None):
+    """Returns the number of additions, commits and deletions for each author, and the author's profile page, starting from an optional timestamp."""
     response = make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
     authorList = []
 
     for contributor in response:
         authorName = contributor['author']['login']
+        author_url = contributor['author']['html_url']
         a = 0
         d = 0
         c = 0
         for week in contributor['weeks']:
-            a += week['a']
-            d += week['d']
-            c += week['c']
-        author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c}
+            if not start_time or datetime.datetime.fromtimestamp(week['w']) >= start_time:
+                a += week['a']
+                d += week['d']
+                c += week['c']
+        author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c, url:author_url}
         authorList.append(author)
     return authorList
-
-def get_top_contributors_by_lines():
-    pass
-
-def get_top_contributor_in_period(start):
-    pass
 
 def get_latest_commit(owner, repo):
     """Returns a dictionary containing info about the latest commit. See https://developer.github.com/v3/repos/commits/ for format specification."""
     response = make_request('repos/{}/{}/commits'.format(owner, repo))
     return response[0]
-
-def get_commit_history(author, start, end):
-    pass
-
