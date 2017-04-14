@@ -65,7 +65,10 @@ def get_commit_history(owner, repo, login):
 @app.route('/<owner>/<repo>/git', methods=['GET'])
 def prepare_repo(owner, repo):
     import git_api
-    git_api.prepare_repo(owner, repo)
+    repo = git_api.prepare_repo(owner, repo)
+
+    if not repo:
+        return 'Invalid repo'
 
     return 'Repo prepared'
 

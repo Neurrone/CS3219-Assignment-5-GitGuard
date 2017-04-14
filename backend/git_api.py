@@ -23,8 +23,11 @@ def sync_repo(owner, repo):
     return repo
 
 def clone_repo(owner, repo):
-    repo = git.Repo.clone_from(get_remote_url(owner, repo), get_repo_path(owner, repo), branch='master')
-    return repo
+    try:
+        return git.Repo.clone_from(get_remote_url(owner, repo), get_repo_path(owner, repo), branch='master')
+    except:
+        logging.info('Could not clone repo. Is it valid?')
+        return None
 
 def prepare_repo(owner, repo):
     try:
