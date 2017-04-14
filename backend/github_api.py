@@ -19,12 +19,12 @@ def get_author_contributions(owner, repo):
     response = make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
     authorList = []
 
-    for set in response:
-        authorName = set['author']['login']
+    for contributor in response:
+        authorName = contributor['author']['login']
         a = 0
         d = 0
         c = 0
-        for week in set['weeks']:
+        for week in contributor['weeks']:
             a += week['a']
             d += week['d']
             c += week['c']
