@@ -6,7 +6,7 @@ class LinesCard extends React.Component {
     render() {
         return (
             <Card className='card-container'>
-                <h3>Lines Of Code</h3>
+                <h3>Lines of Code</h3>
                 <Table>
                     <colgroup>
                         <col width='50%' />
@@ -14,7 +14,7 @@ class LinesCard extends React.Component {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th>Username</th>
+                            <th>Author</th>
                             <th>Lines of code</th>
                         </tr>
                     </thead>
