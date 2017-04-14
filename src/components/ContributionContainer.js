@@ -7,7 +7,7 @@ import ContributionModal from './ContributionModal.js';
 class ContributionContainer extends React.Component {
     render() {
         return (
-            <div className='card-stats'>
+            <div className='card-stats' id='contribution-container'>
                 <ContributionCard allContributionSum={this.props.allContributionSum}
                     toggleModalAndUser={this.props.toggleModalAndUser}
                     configList={this.props.configList} />

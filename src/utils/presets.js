@@ -11,10 +11,6 @@ export const allCommitsOfRepoByUserInRange = (owner, repo, user, start, end) => 
            '&?since=' + start + '&?until=' + end;
 };
 
-export const allCommitsOfFile = (owner, repo, filepath) => {
-    return '/repos/' + owner + '/' + repo + '/commits?path=' + filepath;
-};
-
 // Use Javascript Date object to manage subtracting days
 // http://stackoverflow.com/questions/563406/add-days-to-javascript-date
 export const allCollaboratorsOfRepoInLastWeek = (owner, repo, lastweek) => {
@@ -33,3 +29,12 @@ export const allContributionSum = (owner, repo) => {
 export const allCommitsOfRepoForUser = (owner, repo, user) => {
     return owner + '/' + repo + '/commits?user=' + user;
 };
+
+export const allCommitsOfFile = (owner, repo, filepath) => {
+    return owner + '/' + repo + '/commits?file=' + filepath;
+};
+
+export const allCommitsOfFileWithLines = (owner, repo, filepath, start, end) => {
+    return owner + '/' + repo + '/commits?file=' + filepath + '&start=' + start + '&end=' + end;
+};
+

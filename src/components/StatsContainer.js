@@ -4,6 +4,7 @@ import ReactHighcharts from 'react-highcharts'
 
 // Import the components
 import ContributionContainer from './ContributionContainer.js';
+import CommitFileContainer from './CommitFileContainer';
 
 // Import the Github API calls and presets
 import * as api from '../utils/scrape.js';
@@ -14,11 +15,18 @@ class StatsContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            submittedFileButton: false,
+            commitFilepath: '',
+            commitFileStart: '',
+            commitFileEnd: '',
+
             updatedModalUser: false,
             modalIsOpen: false,
             modalUser: '',
+
             allContributionSum: [],
             allCommitsForUser: [],
+            allCommitsForFile: [],
             configList: [
                 {}, {}, {},
                 {
@@ -53,6 +61,30 @@ class StatsContainer extends React.Component {
             updatedModalUser: true,
             modalIsOpen: !this.state.modalIsOpen,
             modalUser: login,
+        });
+    }
+
+    submitFileButton() {
+        this.setState({
+            submittedFileButton: true,
+        });
+    }
+
+    updateFilepath(e) {
+        this.setState({
+            commitFilepath: e.target.value,
+        });
+    }
+
+    updateFileStart(e) {
+        this.setState({
+            commitFileStart: e.target.value,
+        });
+    }
+
+    updateFileEnd(e) {
+        this.setState({
+            commitFileEnd: e.target.value,
         });
     }
 
@@ -102,10 +134,8 @@ class StatsContainer extends React.Component {
                     });
                     // Remove the class appending display:none and show the data
                     // after the asynchronous call to API
-                    const allCards = document.getElementsByClassName('card-stats');
-                    for (var i = 0; i < allCards.length; i++) {
-                        allCards[i].classList.remove('card-stats');
-                    }
+                    document.getElementById('contribution-container').className = '';
+                    document.getElementById('commit-file-container').className = '';
                 });
         }
 
@@ -127,26 +157,46 @@ class StatsContainer extends React.Component {
                             configs.forCommitHistoryOfUser(json),
                         ],
                     });
-                    // Remove the class appending display:none and show the data
-                    // after the asynchronous call to API
-                    const allCards = document.getElementsByClassName('card-stats');
-                    for (var i = 0; i < allCards.length; i++) {
-                        allCards[i].classList.remove('card-stats');
-                    }
+                });
+        }
+
+        // Call the API for commits for file
+        // Only make this API call when submittedFileButton has been set
+        if (this.state.submittedFileButton) {
+            api.api(presets.allCommitsOfFileWithLines(this.props.owner, 
+                                                      this.props.repo,
+                                                      this.state.commitFilepath,
+                                                      this.state.commitFileStart,
+                                                      this.state.commitFileEnd), 
+                json => {
+                    this.setState({
+                        submittedFileButton: false,
+                        allCommitsForFile: json,
+                    });
                 });
         }
     }
 
     render() {
         return (
-            <ContributionContainer configList={this.state.configList} 
-                allContributionSum={this.state.allContributionSum}
-                modalIsOpen={this.state.modalIsOpen}
-                modalUser={this.state.modalUser}
-                toggleModal={this.toggleModal.bind(this)}
-                toggleModalAndUser={this.toggleModalAndUser.bind(this)}
-                toggleStartDate={this.toggleStartDate.bind(this)}
-                toggleEndDate={this.toggleEndDate.bind(this)}  />
+            <div>
+                <ContributionContainer configList={this.state.configList} 
+                    allContributionSum={this.state.allContributionSum}
+                    modalIsOpen={this.state.modalIsOpen}
+                    modalUser={this.state.modalUser}
+                    toggleModal={this.toggleModal.bind(this)}
+                    toggleModalAndUser={this.toggleModalAndUser.bind(this)}
+                    toggleStartDate={this.toggleStartDate.bind(this)}
+                    toggleEndDate={this.toggleEndDate.bind(this)}  />
+                <CommitFileContainer allCommitsForFile={this.state.allCommitsForFile} 
+                    commitFilepath={this.state.commitFilepath} 
+                    commitFileStart={this.state.commitFileStart}
+                    commitFileEnd={this.state.commitFileEnd}
+                    submitFileButton={this.submitFileButton.bind(this)} 
+                    updateFilepath={this.updateFilepath.bind(this)} 
+                    updateFileStart={this.updateFileStart.bind(this)}
+                    updateFileEnd={this.updateFileEnd.bind(this)} />
+            </div>
         );
     }
 }
