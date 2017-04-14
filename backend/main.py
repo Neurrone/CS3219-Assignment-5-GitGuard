@@ -215,6 +215,7 @@ def get_lines(owner, repo):
     if not repo:
         raise LocalRepoError()
 
+    logging.info('Enumerating repo files...')
     try:
         filenames = repo.git.ls_files().split('\n')
     except GitCommandError as e:
@@ -224,6 +225,7 @@ def get_lines(owner, repo):
     counts = {}
     name_mail_map = {}
     for filename in filenames:
+        logging.info('Processing %s', filename)
         try:
             git_output = repo.git.blame('--line-porcelain', filename)
         except GitCommandError as e:
