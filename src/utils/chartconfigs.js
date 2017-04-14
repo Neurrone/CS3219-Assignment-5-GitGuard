@@ -145,14 +145,14 @@ export const forCommitHistoryOfUser = (json) => {
         xAxis: {
             categories: json.map((obj) => {
                 return obj.date;
-            }),
+            }).reverse(),
         },
         series: [
             {
                 name: 'Commits',
                 data: json.map((obj) => {
                     return obj.count;
-                }),
+                }).reverse(),
             },
         ]
     };

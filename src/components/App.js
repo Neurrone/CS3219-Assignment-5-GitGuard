@@ -17,14 +17,14 @@ class App extends React.Component {
     }
 
     updateStateLink(link) {
-        console.log('Setting state to: ' + link);
+        //console.log('Setting state to: ' + link);
         this.setState({
             link: link,
             submit: 'false',
         });
         // This displays wrong values because React's setState
         // method is asynchronous and does not immediately update
-        console.log('Current link in state: ' + this.state.link);
+        // console.log('Current link in state: ' + this.state.link);
     };
 
     submitRepoLink() {
@@ -39,8 +39,6 @@ class App extends React.Component {
             repo: repo,
             submit: 'true',
         });
-        console.log('owner: ' + owner);
-        console.log('repo: ' + repo);
     }
 
     updateSubmittedStatus() {
