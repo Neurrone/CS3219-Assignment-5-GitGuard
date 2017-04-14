@@ -48,21 +48,7 @@ def get_commits_for_user(owner, repo, user):
 # sums up the total contributions (additions, deletions and commits) for all contributors
 @app.route('/<owner>/<repo>/sum_contribution', methods=['GET'])
 def get_sum_contribution(owner, repo):
-    response = github_api.make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
-    authorList = [];
-
-    for set in response:
-        authorName = set['author']['login'];
-        a = 0;
-        d = 0;
-        c = 0;
-        for week in set['weeks']:
-            a += week['a'];
-            d += week['d'];
-            c += week['c'];
-        author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c}
-        authorList.append(author);
-    return jsonify(authorList);
+    return jsonify(github_api.get_author_contributions(owner, repo))
 
 # gets tne summed contributions of each contributor, sorted by additions (for chatbot)
 @app.route('/<owner>/<repo>/sum_contribution/addition', methods=['GET'])

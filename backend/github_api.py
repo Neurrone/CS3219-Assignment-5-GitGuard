@@ -13,8 +13,23 @@ def make_request(url):
     r = requests.get("https://api.github.com/" + url, params=payload)
     return r.json()
 
-def get_top_contributors_by_commits():
-    pass
+def get_author_contributions(owner, repo):
+    """Returns the number of additions, commits and deletions for each author."""
+    response = make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
+    authorList = []
+
+    for set in response:
+        authorName = set['author']['login']
+        a = 0
+        d = 0
+        c = 0
+        for week in set['weeks']:
+            a += week['a']
+            d += week['d']
+            c += week['c']
+        author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c}
+        authorList.append(author)
+    return authorList
 
 def get_top_contributors_by_lines():
     pass
