@@ -49,7 +49,7 @@ class InvalidRepoError(BadRequest):
 
 class LocalRepoError(BadRequest):
     def __init__(self):
-        BadRequest.__init__(self, message='Could not clone repo. Is it valid?', logger=logging.info)
+        BadRequest.__init__(self, message='Could not clone repo. Is it valid?', status_code=404, logger=logging.info)
 
 class GgError(BadRequest):
     def __init__(self, message):
