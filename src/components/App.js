@@ -3,6 +3,7 @@ import { PropTypes } from 'react';
 
 import InputBar from './InputBar.js';
 import StatsContainer from './StatsContainer.js';
+import LandingCard from './LandingCard.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -54,6 +55,8 @@ class App extends React.Component {
                     onLinkChange={this.updateStateLink.bind(this)} 
                     onLinkSubmit={this.submitRepoLink.bind(this)} />
                 
+                <LandingCard />
+
                 <StatsContainer submit={this.state.submit}
                     owner={this.state.owner}
                     repo={this.state.repo}

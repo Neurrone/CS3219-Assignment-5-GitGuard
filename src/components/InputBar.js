@@ -1,5 +1,4 @@
 import React from 'react';
-import { Redirect } from 'react-router';
 import { Card, Form, InputGroup, FormInput, Button, Glyph } from 'elemental';
 import '../../node_modules/elemental/less/elemental.less';
 
