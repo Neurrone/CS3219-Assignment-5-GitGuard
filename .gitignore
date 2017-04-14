@@ -96,5 +96,7 @@ ENV/
 
 # Authentication variables
 /utils/auth.js
+
 secrets.py
 backend/secrets.py
+backend/repos/
