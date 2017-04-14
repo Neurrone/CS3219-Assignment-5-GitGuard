@@ -3,7 +3,7 @@ import re
 import datetime
 import time
 
-from telegram.ext import CommandHandler, Updater
+from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
 from secrets import BOT_TOKEN, GIT_USER, GIT_TOKEN
 import github_api
@@ -27,7 +27,7 @@ def parse_repo_url(url):
 # command handlers
 
 def start(bot, update):
-    bot.sendMessage(chat_id=update.message.chat_id, text="I'm a bot, please talk to me!")
+    bot.sendMessage(chat_id=update.message.chat_id, text='Valid commands are /top3, /top and /latest.')
 
 def top3_contributors(bot, update, args):
     result = ''
@@ -95,6 +95,9 @@ def latest_commit(bot, update, args):
         result = 'You must specify the repositorys url. For example, "/latest https://github.com/TEAMMATES/teammates"'
     bot.sendMessage(chat_id=update.message.chat_id, text=result, parse_mode='Markdown', disable_web_page_preview=True)
 
+def handle_unknown_command(bot, update):
+    bot.sendMessage(chat_id=update.message.chat_id, text='Valid commands are /top3, /top and /latest.')
+
 updater = Updater(token = BOT_TOKEN)
 dispatcher = updater.dispatcher
 
@@ -104,8 +107,8 @@ top3_handler = CommandHandler('top3', top3_contributors, pass_args=True)
 dispatcher.add_handler(top3_handler)
 top_contributor_in_recent_period_handler = CommandHandler('top', top_contributor_in_recent_period, pass_args=True)
 dispatcher.add_handler(top_contributor_in_recent_period_handler)
-
 latest_handler = CommandHandler('latest', latest_commit, pass_args=True)
 dispatcher.add_handler(latest_handler)
-
+unknown_command_handler = MessageHandler(Filters.command, handle_unknown_command)
+dispatcher.add_handler(unknown_command_handler)
 updater.start_polling()
