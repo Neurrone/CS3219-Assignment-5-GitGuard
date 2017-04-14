@@ -11,6 +11,7 @@ def make_request(url):
     """
     headers = {'Authorization': 'token %s' % GIT_TOKEN}
     r = requests.get("https://api.github.com/" + url, headers=headers)
+    print(r.headers)
     return r.json()
 
 def get_author_contributions(owner, repo):
