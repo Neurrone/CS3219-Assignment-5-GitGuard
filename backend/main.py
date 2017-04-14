@@ -23,7 +23,7 @@ app = Flask(__name__)
 flask_cors.CORS(app) # allow cross-origin requests (e.g. from frontend)
 
 class BadRequest(Exception):
-    status_code = 400
+    status_code = 500
 
     def __init__(self, message, status_code=None, payload=None, logger=None):
         Exception.__init__(self)
@@ -39,12 +39,28 @@ class BadRequest(Exception):
         rv['message'] = self.message
         return rv
 
+class InvalidParametersError(BadRequest):
+    def __init__(self, message):
+        BadRequest.__init__(self, message=message, status_code=400, logger=logging.info)
+
+class InvalidRepoError(BadRequest):
+    def __init__(self):
+        BadRequest.__init__(self, message='Invalid repo', status_code=404, logger=logging.info)
+
+class LocalRepoError(BadRequest):
+    def __init__(self):
+        BadRequest.__init__(self, message='Error preparing local repo', logger=logging.info)
+
 class GgError(BadRequest):
     def __init__(self, message):
-        BadRequest.__init__(self, message=message, logger=logging.warning)
+        BadRequest.__init__(self, message=message, logger=logging.info)
+
+@app.errorhandler(ValueError)
+def handle_value_error(error):
+    return handle_bad_request(InvalidRepoError())
 
 @app.errorhandler(BadRequest)
-def handle_invalid_usage(error):
+def handle_bad_request(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
@@ -77,7 +93,7 @@ def get_commits_for_user(owner, repo, user):
                 i = j;
                 count += 1;
         if (itrCount == i):
-            commit = {'date': commitDate, 'count': count};
+            commit = {'user': user, 'date': commitDate, 'count': count};
             commitList.append(commit);
         itrCount += 1;
 
@@ -92,19 +108,19 @@ def get_commits_for_file(owner, repo, file, start=None, end=None):
 
     if start:
         if not start.isdigit() or not end.isdigit():
-            raise GgError('Invalid line range: line numbers must be digits')
+            raise InvalidParametersError('Invalid line range: line numbers must be digits')
 
         try:
             start = int(start)
             end = int(end)
         except:
-            raise GgError('Invalid line range: line numbers must be integers')
+            raise InvalidParametersError('Invalid line range: line numbers must be integers')
 
         if start <= 0:
-            raise GgError('Invalid line range: line numbers must be positive')
+            raise InvalidParametersError('Invalid line range: line numbers must be positive')
 
         if end < start:
-            raise GgError('Invalid line range: end must not be before start')
+            raise InvalidParametersError('Invalid line range: end must not be before start')
 
         args.append('-L {},{}:{}'.format(start, end, file))
     else:
@@ -113,7 +129,7 @@ def get_commits_for_file(owner, repo, file, start=None, end=None):
 
     repo = git_api.prepare_repo(owner, repo)
     if not repo:
-        raise GgError('Error preparing local repo')
+        raise LocalRepoError()
 
     try:
         git_output = repo.git.log(*args)
@@ -121,12 +137,12 @@ def get_commits_for_file(owner, repo, file, start=None, end=None):
         # f.write(git_output.encode('utf8'))
         # f.close()
     except GitCommandError as e:
-        e_msg = str(e)
-        e_msg_last_line = e_msg.split('\n')[-1]
-        if 'file {} has only '.format(file) in e_msg_last_line:
-            line_count = [int(s) for s in e_msg_last_line.split() if s.isdigit()][0]
-            raise GgError('Invalid line range: file only has {} lines'.format(line_count))
-        raise GgError('Error running git log: ' + e_msg_last_line)
+        msg = str(e).split('\n')[-1]
+        if 'file {} has only '.format(file) in msg:
+            line_count = [int(s) for s in msg.split() if s.isdigit()][0]
+            raise InvalidParametersError('Invalid line range: file only has {} lines'.format(line_count))
+
+        raise GgError('Error running git log: ' + msg)
 
     lines = git_output.split('\n')
     commit_start_locations = []
@@ -182,7 +198,7 @@ def get_commits(owner, repo):
         else:
             return get_commits_for_file(owner, repo, file)
 
-    raise GgError('Please specify user or file params')
+    raise InvalidParametersError('Please specify user or file params')
 
 # sums up the total contributions (additions, deletions and commits) for all contributors
 @app.route('/<owner>/<repo>/sum_contribution', methods=['GET'])
@@ -197,16 +213,21 @@ def get_lines(owner, repo):
 
     repo = git_api.prepare_repo(owner, repo)
     if not repo:
-        raise GgError('Error preparing local repo')
+        raise LocalRepoError()
 
-    filenames = repo.git.ls_files().split('\n')
+    try:
+        filenames = repo.git.ls_files().split('\n')
+    except GitCommandError as e:
+        msg = str(e).split('\n')[-1]
+        raise GgError('Error running git ls-files: ' + msg)
+
     counts = {}
     name_mail_map = {}
     for filename in filenames:
         try:
             git_output = repo.git.blame('--line-porcelain', filename)
         except GitCommandError as e:
-            logging.warning('Could not git blame %s; skipping...', filename)
+            logging.warning('Error running git blame %s; skipping...', filename)
             continue
 
         lines = git_output.split('\n')
