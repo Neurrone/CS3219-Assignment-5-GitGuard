@@ -24,7 +24,6 @@ def get_collaborators(owner, repo):
     response = github_api.make_request('repos/{}/{}/collaborators'.format(owner, repo))
     return jsonify(response)
 
-@app.route('/<owner>/<repo>/<user>/commits_for_user', methods=['GET'])
 def get_commits_for_user(owner, repo, user):
     response = github_api.make_request('repos/{}/{}/commits?author={}'.format(owner, repo, user))
     commitList = [];
@@ -44,6 +43,26 @@ def get_commits_for_user(owner, repo, user):
         itrCount += 1;
 
     return jsonify(commitList);
+
+def get_commits_for_file(owner, repo, file, start=None, end=None):
+    return jsonify('TODO: file-specific commits')
+
+@app.route('/<owner>/<repo>/commits', methods=['GET'])
+def get_commits(owner, repo):
+    user = request.args.get('user')
+    if user:
+        return get_commits_for_user(owner, repo, user)
+
+    file = request.args.get('file')
+    start = request.args.get('start')
+    end = request.args.get('end')
+    if file:
+        if start and end and start.is_digit() and end.is_digit() and int(start) <= int(end):
+            return get_commits_for_file(owner, repo, file, start=int(start), end=int(end))
+        else:
+            return get_commits_for_file(owner, repo, file)
+
+    return jsonify('TODO: error')
 
 # sums up the total contributions (additions, deletions and commits) for all contributors
 @app.route('/<owner>/<repo>/sum_contribution', methods=['GET'])
