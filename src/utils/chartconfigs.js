@@ -258,3 +258,14 @@ export const mergeConfig = (config1, config2) => {
     //console.log(config1);
     return config1;
 }
+
+export const headerOnly = () => {
+    return {
+        title: {
+            text: 'User Commit History',
+        },
+        subtitle: {
+            text: 'Commits per day',
+        },
+    };
+};

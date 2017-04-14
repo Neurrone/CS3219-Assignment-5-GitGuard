@@ -76,6 +76,14 @@ class StatsContainer extends React.Component {
             updatedModalUser: true,
             modalIsOpen: !this.state.modalIsOpen,
             modalUser: login,
+            configList: [
+                this.state.configList[0],
+                this.state.configList[1],
+                this.state.configList[2],
+                this.state.configList[3],
+                configs.headerOnly(),
+                this.state.configList[5],
+            ],
         });
     }
 
@@ -83,6 +91,14 @@ class StatsContainer extends React.Component {
         this.setState({
             updatedModalCompare: true,
             modalCompare: e,
+            configList: [
+                this.state.configList[0],
+                this.state.configList[1],
+                this.state.configList[2],
+                this.state.configList[3],
+                configs.headerOnly(),
+                this.state.configList[5],
+            ],
         });
     }
 
@@ -148,6 +164,7 @@ class StatsContainer extends React.Component {
             api.api(presets.allContributionSum(this.props.owner, 
                                                this.props.repo), 
                 json => {
+                    console.log('running callback for allContributionSum');
                     this.setState({
                         allContributionSum: json,
                         configList: [
@@ -169,6 +186,7 @@ class StatsContainer extends React.Component {
             api.api(presets.allLinesOfRepo(this.props.owner, 
                                            this.props.repo), 
                 json => {
+                    console.log('running callback for allLinesOfRepo');
                     this.setState({
                         allLines: json,
                     });
@@ -185,6 +203,7 @@ class StatsContainer extends React.Component {
                                                     this.props.repo,
                                                     this.state.modalUser), 
                 json => {
+                    console.log('running callback for updatedModalUser');
                     this.setState({
                         updatedModalUser: false,
                         allCommitsForUser: json,
@@ -207,6 +226,7 @@ class StatsContainer extends React.Component {
                                                     this.props.repo,
                                                     this.state.modalCompare), 
                 json => {
+                    console.log('running callback for updatedModalCompare');
                     this.setState({
                         updatedModalCompare: false,
                         allCommitsForCompare: json,
@@ -233,6 +253,7 @@ class StatsContainer extends React.Component {
                                                       this.state.commitFileStart,
                                                       this.state.commitFileEnd), 
                 json => {
+                    console.log('running callback for submittedFileButton');
                     this.setState({
                         submittedFileButton: false,
                         allCommitsForFile: json,

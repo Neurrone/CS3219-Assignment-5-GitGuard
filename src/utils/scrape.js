@@ -26,7 +26,6 @@ export const api = (path, cb) => {
         })
         .then(
             json => {
-                console.log('Running callback');
                 cb(json);
             },
             err => {
