@@ -22,8 +22,8 @@ class LinesCard extends React.Component {
                         {this.props.allLines.map((obj, i) => {
                             return (
                                 <tr key={i}>
-                                    <td></td>
-                                    <td>{obj.commits}</td>
+                                    <td>{obj.name}</td>
+                                    <td>{obj.count}</td>
                                 </tr>
                             );
                         })}
