@@ -36,7 +36,7 @@ class BadRequest(Exception):
 
     def to_dict(self):
         rv = dict(self.payload or ())
-        rv['message'] = self.message
+        rv['error'] = self.message
         return rv
 
 class InvalidParametersError(BadRequest):
@@ -45,11 +45,11 @@ class InvalidParametersError(BadRequest):
 
 class InvalidRepoError(BadRequest):
     def __init__(self):
-        BadRequest.__init__(self, message='Error getting repo information. Is it valid?', status_code=404, logger=logging.info)
+        BadRequest.__init__(self, message='Could not get repo information. Is it valid?', status_code=404, logger=logging.info)
 
 class LocalRepoError(BadRequest):
     def __init__(self):
-        BadRequest.__init__(self, message='Error cloning repo. Is it valid?', logger=logging.info)
+        BadRequest.__init__(self, message='Could not clone repo. Is it valid?', logger=logging.info)
 
 class GgError(BadRequest):
     def __init__(self, message):
