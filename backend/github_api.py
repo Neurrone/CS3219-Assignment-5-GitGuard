@@ -33,12 +33,13 @@ def make_request(url_without_github_prefix):
     return r.json()
 
 def get_author_contributions(owner, repo, start_time=None):
-    """Returns the number of additions, commits and deletions for each author, starting from an optional timestamp."""
+    """Returns the number of additions, commits and deletions for each author, and the author's profile page, starting from an optional timestamp."""
     response = make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
     authorList = []
 
     for contributor in response:
         authorName = contributor['author']['login']
+        author_url = contributor['author']['html_url']
         a = 0
         d = 0
         c = 0
@@ -47,7 +48,7 @@ def get_author_contributions(owner, repo, start_time=None):
                 a += week['a']
                 d += week['d']
                 c += week['c']
-        author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c}
+        author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c, url:author_url}
         authorList.append(author)
     return authorList
 
