@@ -15,6 +15,9 @@ class StatsContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            modalStart: '0000-00-00',
+            modalEnd: '9999-99-99',
+
             submittedFileButton: false,
             commitFilepath: '',
             commitFileStart: '',
@@ -91,25 +94,27 @@ class StatsContainer extends React.Component {
     // Elemental formSelect returns selected value as e
     toggleStartDate(e) {
         this.setState({
+            modalStart: e,
             configList: [
                 this.state.configList[0],
                 this.state.configList[1],
                 this.state.configList[2],
                 this.state.configList[3],
                 // Use JSON.parse(JSON.stringify()) to clone the object
-                configs.modifyStartInConfig(JSON.parse(JSON.stringify(this.state.configList[4])), e),
+                configs.modifyConfig(JSON.parse(JSON.stringify(this.state.configList[3])), e, this.state.modalEnd),
             ],
         });
     }
 
     toggleEndDate(e) {
         this.setState({
+            modalEnd: e,
             configList: [
                 this.state.configList[0],
                 this.state.configList[1],
                 this.state.configList[2],
                 this.state.configList[3],
-                configs.modifyEndInConfig(JSON.parse(JSON.stringify(this.state.configList[4])), e),
+                configs.modifyConfig(JSON.parse(JSON.stringify(this.state.configList[3])), this.state.modalStart, e),
             ],
         });
     }
