@@ -160,6 +160,11 @@ class StatsContainer extends React.Component {
         if (this.props.submit == 'true') {
             // Reset the submit prop to prevent continuous requerying
             this.props.onDataLoaded();
+
+            document.getElementById('contribution-container').className = 'loading';
+            document.getElementById('commit-file-container').className = 'loading';
+            document.getElementById('lines-container').className = 'loading';
+
             // Call the API for sum of contributions
             api.api(presets.allContributionSum(this.props.owner, 
                                                this.props.repo), 
@@ -192,7 +197,19 @@ class StatsContainer extends React.Component {
                             // Remove the class appending display:none and show the data
                             // after the asynchronous call to API
                             document.getElementById('lines-container').className = '';
+                        },
+
+                        error => {
+                            alert(error);
+                            document.getElementById('lines-container').className = 'card-stats';
                         });
+                },
+
+                error => {
+                    alert(error);
+                    document.getElementById('contribution-container').className = 'card-stats';
+                    document.getElementById('commit-file-container').className = 'card-stats';
+                    document.getElementById('lines-container').className = 'card-stats';
                 });
         }
 
@@ -216,6 +233,10 @@ class StatsContainer extends React.Component {
                             this.state.configList[5],
                         ],
                     });
+                },
+
+                error => {
+                    console.log(error);
                 });
         }
 
@@ -241,23 +262,34 @@ class StatsContainer extends React.Component {
                             configs.forCommitHistoryOfUser(json, this.state.modalCompare),
                         ],
                     });
+                },
+
+                error => {
+                    console.log(error);
                 });
         }
 
         // Call the API for commits for file
         // Only make this API call when submittedFileButton has been set
         if (this.state.submittedFileButton) {
-            api.api(presets.allCommitsOfFileWithLines(this.props.owner, 
+            document.getElementById('commit-file-container').className = 'loading';
+            api.api(presets.allCommitsOfFileWithLines(this.props.owner,
                                                       this.props.repo,
                                                       this.state.commitFilepath,
                                                       this.state.commitFileStart,
                                                       this.state.commitFileEnd), 
                 json => {
+                    document.getElementById('commit-file-container').className = '';
                     console.log('running callback for submittedFileButton');
                     this.setState({
                         submittedFileButton: false,
                         allCommitsForFile: json,
                     });
+                },
+
+                error => {
+                    document.getElementById('commit-file-container').className = '';
+                    alert(error);
                 });
         }
     }

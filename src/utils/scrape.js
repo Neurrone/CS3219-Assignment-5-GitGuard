@@ -15,7 +15,7 @@ const options = {
     }
 }
 
-export const api = (path, cb) => {
+export const api = (path, cb, ecb) => {
     return fetch(endPoint + path)
         .then((response) => {
             let json = response.json();
@@ -29,7 +29,7 @@ export const api = (path, cb) => {
                 cb(json);
             },
             err => {
-                alert(err.error)
+                ecb(err.error)
             }
         );
 }

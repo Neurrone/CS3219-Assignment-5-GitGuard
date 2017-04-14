@@ -8,6 +8,14 @@
     display: none;
 }
 
+.loading > .card-container::before {
+    content: 'Loading...';
+}
+
+.loading > .card-container > * {
+    display: none!important;
+}
+
 .back-top {
     text-align: center;
 }
