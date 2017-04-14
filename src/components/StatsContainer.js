@@ -3,7 +3,7 @@ import Highcharts from 'highcharts';
 import ReactHighcharts from 'react-highcharts'
 
 // Import the components
-import ContributionCard from './ContributionCard.js';
+import ContributionContainer from './ContributionContainer.js';
 
 // Import the Github API calls and presets
 import * as api from '../utils/scrape.js';
@@ -48,7 +48,6 @@ class StatsContainer extends React.Component {
             api.api(presets.allContributionSum(this.props.owner, 
                                                this.props.repo), 
                 json => {
-                    console.log(configs.forCommitsByUser(json));
                     this.setState({
                         allContributionSum: json,
                         configList: [
@@ -96,7 +95,7 @@ class StatsContainer extends React.Component {
 
     render() {
         return (
-            <ContributionCard configList={this.state.configList} 
+            <ContributionContainer configList={this.state.configList} 
                 allContributionSum={this.state.allContributionSum}
                 modalIsOpen={this.state.modalIsOpen}
                 modalUser={this.state.modalUser}

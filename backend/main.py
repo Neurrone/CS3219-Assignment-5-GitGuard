@@ -50,24 +50,15 @@ def get_commits_for_user(owner, repo, user):
 def get_sum_contribution(owner, repo):
     return jsonify(github_api.get_author_contributions(owner, repo))
 
-# returns a list containing the week data (additions, deletions and commits) for a specific user
-@app.route('/<owner>/<repo>/<login>/commit_history', methods=['GET'])
-def get_commit_history(owner, repo, login):
-    response = github_api.make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
-
-    for set in response:
-        if (login == set['author']['login']):
-            author_commit_history = set['weeks']
-            break;
-
-    return jsonify(author_commit_history);
-
-@app.route('/<owner>/<repo>/clone', methods=['GET'])
-def clone_repo(owner, repo):
+@app.route('/<owner>/<repo>/git', methods=['GET'])
+def prepare_repo(owner, repo):
     import git_api
-    git_api.clone_repo(owner, repo)
+    repo = git_api.prepare_repo(owner, repo)
 
-    return jsonify({})
+    if not repo:
+        return 'Invalid repo'
+
+    return 'Repo prepared'
 
 if __name__ == "__main__":
     app.run()
