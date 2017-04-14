@@ -31,5 +31,5 @@ export const allContributionSum = (owner, repo) => {
 };
 
 export const allCommitsOfRepoForUser = (owner, repo, user) => {
-    return owner + '/' + repo + '/' + user + '/commits_for_user';
+    return owner + '/' + repo + '/commits?user=' + user;
 };
