@@ -157,3 +157,53 @@ export const forCommitHistoryOfUser = (json) => {
         ]
     };
 }
+
+// Returns true if date1 is later or equal to date2
+export const isLaterThan = (date1, date2) => {
+    // Convert to integers
+    const date1Int = parseInt(date1.substr(0, 4) + date1.substr(5, 2) + date1.substr(8, 2));
+    const date2Int = parseInt(date2.substr(0, 4) + date2.substr(5, 2) + date2.substr(8, 2));
+    return date1Int >= date2Int;
+}
+
+// Returns true if date1 is earlier or equal to date2
+export const isEarlierThan = (date1, date2) => {
+    // Convert to integers
+    const date1Int = parseInt(date1.substr(0, 4) + date1.substr(5, 2) + date1.substr(8, 2));
+    const date2Int = parseInt(date2.substr(0, 4) + date2.substr(5, 2) + date2.substr(8, 2));
+    return date1Int <= date2Int;
+}
+
+export const modifyStartInConfig = (config, start) => {
+    // Update x-axis
+    var newCategories = [];
+    var newData = [];
+    for (var i = 0; i < config.xAxis.categories.length; i++) {
+        if (isLaterThan(config.xAxis.categories[i], start)) {
+            newCategories.push(config.xAxis.categories[i]);
+            newData.push(config.series[0].data[i]);
+        }
+    }
+    config.xAxis.categories = newCategories;
+    config.series[0].data = newData;
+
+    console.log(newCategories);
+    return config;
+}
+
+export const modifyEndInConfig = (config, start) => {
+    // Update x-axis
+    var newCategories = [];
+    var newData = [];
+    for (var i = 0; i < config.xAxis.categories.length; i++) {
+        if (isEarlierThan(config.xAxis.categories[i], start)) {
+            newCategories.push(config.xAxis.categories[i]);
+            newData.push(config.series[0].data[i]);
+        }
+    }
+    config.xAxis.categories = newCategories;
+    config.series[0].data = newData;
+
+    console.log(newCategories);
+    return config;
+}

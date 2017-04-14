@@ -13,7 +13,9 @@ class ContributionContainer extends React.Component {
                     configList={this.props.configList} />
                 <ContributionModal modalIsOpen={this.props.modalIsOpen}
                     toggleModal={this.props.toggleModal}
-                    configList={this.props.configList} />
+                    configList={this.props.configList}
+                    toggleStartDate={this.props.toggleStartDate}
+                    toggleEndDate={this.props.toggleEndDate} />
             </div>
         );
     }

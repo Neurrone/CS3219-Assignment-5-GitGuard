@@ -1,6 +1,11 @@
 import requests
 import datetime
 import time
+import sys
+import logging
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 from secrets import GIT_USER, GIT_TOKEN
 
@@ -13,10 +18,17 @@ def make_request(url_without_github_prefix):
     url = 'https://api.github.com/' + url_without_github_prefix
     print("Requesting ", url)
     r = requests.get(url, headers=headers)
-    print('headers:')
-    print(r.headers)
-    print('response:')
-    print(r)
+    print('headers:\n%s\nResponse:\n%s' % (r.headers, r))
+    logging.debug(r.headers)
+    retry_count = 0
+    while r.status_code == 202 and retry_count < 3:
+        logging.info('Status 202 received; pausing and retrying...')
+
+        time.sleep(2)
+        r = requests.get(url, headers=headers)
+        print('headers:\n%s\nResponse:\n%s' % (r.headers, r))
+        retry_count += 1
+
     return r.json()
 
 def get_author_contributions(owner, repo):
@@ -24,12 +36,12 @@ def get_author_contributions(owner, repo):
     response = make_request('repos/{}/{}/stats/contributors'.format(owner, repo))
     authorList = []
 
-    for set in response:
-        authorName = set['author']['login']
+    for contributor in response:
+        authorName = contributor['author']['login']
         a = 0
         d = 0
         c = 0
-        for week in set['weeks']:
+        for week in contributor['weeks']:
             a += week['a']
             d += week['d']
             c += week['c']

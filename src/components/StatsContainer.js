@@ -20,7 +20,23 @@ class StatsContainer extends React.Component {
             allContributionSum: [],
             allCommitsForUser: [],
             configList: [
-                {}, {}, {}, {},
+                {}, {}, {},
+                {
+                    // Add a dummy attribute so empty modal can be rendered
+                    // Workaround configList[3]
+                    xAxis: {
+                        categories: [],
+                    },
+                },
+                {
+                    // configList[4]
+                    // This one stores the config for the actual displayed
+                    // graph, configList[3] stores data needed for the full
+                    // graph
+                    xAxis: {
+                        categories: [],
+                    },
+                },
             ],
         };
     }
@@ -40,6 +56,32 @@ class StatsContainer extends React.Component {
         });
     }
 
+    // Elemental formSelect returns selected value as e
+    toggleStartDate(e) {
+        this.setState({
+            configList: [
+                this.state.configList[0],
+                this.state.configList[1],
+                this.state.configList[2],
+                this.state.configList[3],
+                // Use JSON.parse(JSON.stringify()) to clone the object
+                configs.modifyStartInConfig(JSON.parse(JSON.stringify(this.state.configList[4])), e),
+            ],
+        });
+    }
+
+    toggleEndDate(e) {
+        this.setState({
+            configList: [
+                this.state.configList[0],
+                this.state.configList[1],
+                this.state.configList[2],
+                this.state.configList[3],
+                configs.modifyEndInConfig(JSON.parse(JSON.stringify(this.state.configList[4])), e),
+            ],
+        });
+    }
+
     componentDidUpdate() {
         if (this.props.submit == 'true') {
             // Reset the submit prop to prevent continuous requerying
@@ -55,6 +97,7 @@ class StatsContainer extends React.Component {
                             configs.forAdditionsByUser(json),
                             configs.forDeletionsByUser(json),
                             this.state.configList[3],
+                            this.state.configList[4],
                         ],
                     });
                     // Remove the class appending display:none and show the data
@@ -81,6 +124,7 @@ class StatsContainer extends React.Component {
                             this.state.configList[1],
                             this.state.configList[2],
                             configs.forCommitHistoryOfUser(json),
+                            configs.forCommitHistoryOfUser(json),
                         ],
                     });
                     // Remove the class appending display:none and show the data
@@ -100,7 +144,9 @@ class StatsContainer extends React.Component {
                 modalIsOpen={this.state.modalIsOpen}
                 modalUser={this.state.modalUser}
                 toggleModal={this.toggleModal.bind(this)}
-                toggleModalAndUser={this.toggleModalAndUser.bind(this)}  />
+                toggleModalAndUser={this.toggleModalAndUser.bind(this)}
+                toggleStartDate={this.toggleStartDate.bind(this)}
+                toggleEndDate={this.toggleEndDate.bind(this)}  />
         );
     }
 }

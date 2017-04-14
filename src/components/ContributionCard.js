@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'elemental';
+import { Card, Table, Row, Col } from 'elemental';
 import Highcharts from 'highcharts';
 import ReactHighcharts from 'react-highcharts'
 import '../../node_modules/elemental/less/elemental.less';
