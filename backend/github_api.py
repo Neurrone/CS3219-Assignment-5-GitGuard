@@ -11,7 +11,6 @@ def make_request(url):
     """
     payload = {'Authorization': 'token %s' % GIT_TOKEN}
     r = requests.get("https://api.github.com/" + url, params=payload)
-    print GIT_TOKEN
     return r.json()
 
 def get_top_contributors_by_commits():
