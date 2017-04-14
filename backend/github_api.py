@@ -51,14 +51,7 @@ def get_author_contributions(owner, repo, start_time=None):
         authorList.append(author)
     return authorList
 
-def get_top_contributors_by_lines():
-    pass
-
 def get_latest_commit(owner, repo):
     """Returns a dictionary containing info about the latest commit. See https://developer.github.com/v3/repos/commits/ for format specification."""
     response = make_request('repos/{}/{}/commits'.format(owner, repo))
     return response[0]
-
-def get_commit_history(author, start, end):
-    pass
-
