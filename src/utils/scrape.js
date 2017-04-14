@@ -17,16 +17,21 @@ const options = {
 
 export const api = (path, cb) => {
     return fetch(endPoint + path)
-        .then(
-            response => response.json(),
-            err => console.error('Error fetching', err)
-        )
+        .then((response) => {
+            let json = response.json();
+            if (!response.ok) {
+                return json.then(err => {throw err;});
+            }
+            return json;
+        })
         .then(
             json => {
                 console.log('Running callback');
                 cb(json);
             },
-            err => console.error('Error parsing JSON', err)
+            err => {
+                alert(err.error)
+            }
         );
 }
 
