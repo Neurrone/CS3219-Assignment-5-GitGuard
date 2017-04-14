@@ -45,7 +45,50 @@ def get_commits_for_user(owner, repo, user):
     return jsonify(commitList);
 
 def get_commits_for_file(owner, repo, file, start=None, end=None):
-    return jsonify('TODO: file-specific commits')
+    import git_api
+    from git.exc import GitCommandError
+    import re
+
+    repo = git_api.prepare_repo(owner, repo)
+    if not repo:
+        return jsonify('TODO: error')
+
+    if start:
+        file_arg = '-L {},{}:{}'.format(start, end, file)
+    else:
+        file_arg = file
+
+    args = [
+        "--format=%H%n%ai%n%an <%ae>%n%s",
+        file_arg
+    ]
+
+    try:
+        git_output = repo.git.log(*args)
+        # f = open('log.txt', 'w')
+        # f.write(git_output.encode('utf8'))
+        # f.close()
+    except GitCommandError as e:
+        return jsonify('TODO: error: ' + str(e).split('\n')[-1])
+
+    lines = git_output.split('\n')
+    commit_start_locations = []
+    for i in range(len(lines)):
+        line = lines[i]
+        if re.search('^[0-9a-f]{40}$', line):
+            commit_start_locations.append(i)
+
+    commits = []
+    for i in commit_start_locations:
+        commit = {
+            'hash': lines[i],
+            'date': lines[i + 1],
+            'author': lines[i + 2],
+            'message': lines[i + 3]
+        }
+        commits.append(commit)
+
+    return jsonify(commits)
 
 @app.route('/<owner>/<repo>/commits', methods=['GET'])
 def get_commits(owner, repo):
@@ -57,7 +100,7 @@ def get_commits(owner, repo):
     start = request.args.get('start')
     end = request.args.get('end')
     if file:
-        if start and end and start.is_digit() and end.is_digit() and int(start) <= int(end):
+        if start and end and start.isdigit() and end.isdigit():
             return get_commits_for_file(owner, repo, file, start=int(start), end=int(end))
         else:
             return get_commits_for_file(owner, repo, file)
@@ -68,16 +111,6 @@ def get_commits(owner, repo):
 @app.route('/<owner>/<repo>/sum_contribution', methods=['GET'])
 def get_sum_contribution(owner, repo):
     return jsonify(github_api.get_author_contributions(owner, repo))
-
-@app.route('/<owner>/<repo>/git', methods=['GET'])
-def prepare_repo(owner, repo):
-    import git_api
-    repo = git_api.prepare_repo(owner, repo)
-
-    if not repo:
-        return 'Invalid repo'
-
-    return 'Repo prepared'
 
 if __name__ == "__main__":
     app.run()
