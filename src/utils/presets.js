@@ -38,3 +38,7 @@ export const allCommitsOfFileWithLines = (owner, repo, filepath, start, end) => 
     return owner + '/' + repo + '/commits?file=' + filepath + '&start=' + start + '&end=' + end;
 };
 
+export const allLinesOfRepo = (owner, repo) => {
+    return owner + '/' + repo + '/lines';
+};
+

@@ -4,7 +4,8 @@ import ReactHighcharts from 'react-highcharts'
 
 // Import the components
 import ContributionContainer from './ContributionContainer.js';
-import CommitFileContainer from './CommitFileContainer';
+import CommitFileContainer from './CommitFileContainer.js';
+import LinesContainer from './LinesContainer.js';
 
 // Import the Github API calls and presets
 import * as api from '../utils/scrape.js';
@@ -29,6 +30,7 @@ class StatsContainer extends React.Component {
             modalUser: '',
             modalCompare: '',
 
+            allLines: [],
             allContributionSum: [],
             allCommitsForUser: [],
             allCommitsForCompare: [],
@@ -161,7 +163,22 @@ class StatsContainer extends React.Component {
                     // after the asynchronous call to API
                     document.getElementById('contribution-container').className = '';
                     document.getElementById('commit-file-container').className = '';
+                    document.getElementById('lines-container').className = '';
                 });
+
+            // Call the API for sum of contributions
+            // api.api(presets.allLinesOfRepo(this.props.owner, 
+            //                                this.props.repo), 
+            //     json => {
+            //         this.setState({
+            //             allLines: json,
+            //         });
+            //         // Remove the class appending display:none and show the data
+            //         // after the asynchronous call to API
+            //         document.getElementById('contribution-container').className = '';
+            //         document.getElementById('commit-file-container').className = '';
+            //         document.getElementById('lines-container').className = '';
+            //     });
         }
 
         // Call the API for commits per day for user
@@ -247,6 +264,7 @@ class StatsContainer extends React.Component {
                     updateFilepath={this.updateFilepath.bind(this)} 
                     updateFileStart={this.updateFileStart.bind(this)}
                     updateFileEnd={this.updateFileEnd.bind(this)} />
+                {/*<LinesContainer allLines={this.state.allLines} />*/}
             </div>
         );
     }
