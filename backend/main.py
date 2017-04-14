@@ -1,4 +1,16 @@
-import os, sys
+import os, sys, argparse, logging
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '-d', '--debug',
+    help="More logging output for debugging purposes",
+    action="store_const", dest="log_level", const=logging.DEBUG,
+    default=logging.INFO,
+)
+
+logging.basicConfig(stream=sys.stdout, level=parser.parse_args().log_level,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "lib"))
 
 from flask import Flask, jsonify, request, abort

@@ -4,8 +4,7 @@ import time
 import sys
 import logging
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 from secrets import GIT_USER, GIT_TOKEN
 
@@ -16,17 +15,19 @@ def make_request(url_without_github_prefix):
     """
     headers = {'Authorization': 'token %s' % GIT_TOKEN}
     url = 'https://api.github.com/' + url_without_github_prefix
-    print("Requesting ", url)
+
+    logger.info("Requesting %s", url)
     r = requests.get(url, headers=headers)
-    print('headers:\n%s\nResponse:\n%s' % (r.headers, r))
-    logging.debug(r.headers)
+    logger.debug('Headers:\n%s\nResponse:\n%s', r.headers, r.text)
+
     retry_count = 0
     while r.status_code == 202 and retry_count < 3:
-        logging.info('Status 202 received; pausing and retrying...')
+        logger.info('Status 202 received; pausing and retrying...')
 
         time.sleep(2)
         r = requests.get(url, headers=headers)
-        print('headers:\n%s\nResponse:\n%s' % (r.headers, r))
+        logger.debug('Headers:\n%s\nResponse:\n%s', r.headers, r.text)
+
         retry_count += 1
 
     return r.json()
