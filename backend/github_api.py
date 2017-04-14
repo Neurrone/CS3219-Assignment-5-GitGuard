@@ -9,8 +9,9 @@ def make_request(url):
     Url should be specified without the "https://api.github.com/" prefix.
     Returns: the result as a  dictionary
     """
-    payload = {'Authorization': 'token %s' % GIT_TOKEN}
-    r = requests.get("https://api.github.com/" + url, params=payload)
+    headers = {'Authorization': 'token %s' % GIT_TOKEN}
+    r = requests.get("https://api.github.com/" + url, headers=headers)
+    print(r.headers)
     return r.json()
 
 def get_author_contributions(owner, repo):
@@ -37,8 +38,11 @@ def get_top_contributors_by_lines():
 def get_top_contributor_in_period(start):
     pass
 
-def get_latest_commit_info():
-    pass
+def get_latest_commit(owner, repo):
+    """Returns a dictionary containing info about the latest commit. See https://developer.github.com/v3/repos/commits/ for format specification."""
+    response = make_request('repos/{}/{}/commits'.format(owner, repo))
+    print(response.json()[0])
+    return response.json()[0]
 
 def get_commit_history(author, start, end):
     pass
