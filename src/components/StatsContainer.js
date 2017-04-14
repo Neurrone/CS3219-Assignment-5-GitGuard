@@ -180,19 +180,19 @@ class StatsContainer extends React.Component {
                     // after the asynchronous call to API
                     document.getElementById('contribution-container').className = '';
                     document.getElementById('commit-file-container').className = '';
-                });
 
-            //Call the API for sum of contributions
-            api.api(presets.allLinesOfRepo(this.props.owner, 
-                                           this.props.repo), 
-                json => {
-                    console.log('running callback for allLinesOfRepo');
-                    this.setState({
-                        allLines: json,
-                    });
-                    // Remove the class appending display:none and show the data
-                    // after the asynchronous call to API
-                    document.getElementById('lines-container').className = '';
+                    //Call the API for lines of repo
+                    api.api(presets.allLinesOfRepo(this.props.owner, 
+                                                this.props.repo), 
+                        json => {
+                            console.log('running callback for allLinesOfRepo');
+                            this.setState({
+                                allLines: json,
+                            });
+                            // Remove the class appending display:none and show the data
+                            // after the asynchronous call to API
+                            document.getElementById('lines-container').className = '';
+                        });
                 });
         }
 
