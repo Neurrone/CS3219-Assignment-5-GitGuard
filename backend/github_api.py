@@ -1,6 +1,11 @@
 import requests
 import datetime
 import time
+import sys
+import logging
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 from secrets import GIT_USER, GIT_TOKEN
 
@@ -11,7 +16,13 @@ def make_request(url):
     """
     headers = {'Authorization': 'token %s' % GIT_TOKEN}
     r = requests.get("https://api.github.com/" + url, headers=headers)
-    print(r.headers)
+    logging.debug(r.headers)
+    retry_count = 0
+    while r.status_code == 202 and retry_count < 3:
+        logging.info('Status 202 received; pausing and retrying...')
+        time.sleep(2)
+        r = requests.get("https://api.github.com/" + url, headers=headers)
+        retry_count += 1
     return r.json()
 
 def get_author_contributions(owner, repo):
