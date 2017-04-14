@@ -1,5 +1,7 @@
 import logging
 import re
+import datetime
+import time
 
 from telegram.ext import CommandHandler, Updater
 
@@ -46,6 +48,33 @@ def top3_contributors(bot, update, args):
         result = 'You must specify the repositorys url. For example, "/top3 https://github.com/TEAMMATES/teammates"'
     bot.sendMessage(chat_id=update.message.chat_id, text=result)
 
+def top_contributor_in_recent_period(bot, update, args):
+    result = ''
+    if len(args) >= 1:
+        repo_url = args[0]
+        period = "week" # default period
+        try:
+            if len(args) >= 2:
+                period = args[1].lower()
+                supported_periods = ["week", "fortnight", "month", "quarter", "year"]
+                if period not in supported_periods:
+                    raise ValueError('Supported periods are ' + ', '.join(supported_periods))
+            
+            owner, repo_name = parse_repo_url(repo_url)
+            now = datetime.datetime.now()
+            weeks_for_period = {'week':1, 'fortnight':2, 'month':4, 'quarter':12, 'year':52}
+            contribution_data = github_api.get_author_contributions(owner, repo_name, start_time = now - datetime.timedelta(weeks=weeks_for_period[period]))
+            
+            top_by_commits = sorted(contribution_data, key = lambda a: a['commits'])[-1]
+            top_by_lines_changed = sorted(contribution_data, key = lambda a: a['additions'] + a['deletions'])[-1]
+            result = 'Top contributor last %s\nBy commits: %s\nBy lines modified: %s' \
+                % (period, top_by_commits['login'], top_by_lines_changed['login'])
+        except ValueError as e:
+            result = '{0}'.format(e)
+    else:
+        result = 'You must specify the repositorys url. For example, "/top3 https://github.com/TEAMMATES/teammates"'
+    bot.sendMessage(chat_id=update.message.chat_id, text=result, parse_mode='Markdown', disable_web_page_preview=True)
+
 def latest_commit(bot, update, args):
     result = ''
     if len(args) > 0:
@@ -73,6 +102,9 @@ start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 top3_handler = CommandHandler('top3', top3_contributors, pass_args=True)
 dispatcher.add_handler(top3_handler)
+top_contributor_in_recent_period_handler = CommandHandler('top', top_contributor_in_recent_period, pass_args=True)
+dispatcher.add_handler(top_contributor_in_recent_period_handler)
+
 latest_handler = CommandHandler('latest', latest_commit, pass_args=True)
 dispatcher.add_handler(latest_handler)
 
