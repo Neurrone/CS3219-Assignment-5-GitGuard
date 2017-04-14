@@ -192,8 +192,8 @@ class StatsContainer extends React.Component {
                             this.state.configList[0],
                             this.state.configList[1],
                             this.state.configList[2],
-                            configs.forCommitHistoryOfUser(json),
-                            configs.forCommitHistoryOfUser(json),
+                            configs.forCommitHistoryOfUser(json, this.state.modalUser),
+                            configs.forCommitHistoryOfUser(json, this.state.modalUser),
                             this.state.configList[5],
                         ],
                     });
@@ -216,8 +216,9 @@ class StatsContainer extends React.Component {
                             this.state.configList[2],
                             this.state.configList[3],
                             // Generate a combined graph config
-                            configs.mergeConfig(JSON.parse(JSON.stringify(this.state.configList[3])), configs.forCommitHistoryOfUser(json)),
-                            configs.forCommitHistoryOfUser(json),
+                            configs.mergeConfig(JSON.parse(JSON.stringify(this.state.configList[3])), 
+                                                configs.forCommitHistoryOfUser(json, this.state.modalCompare)),
+                            configs.forCommitHistoryOfUser(json, this.state.modalCompare),
                         ],
                     });
                 });

@@ -143,7 +143,7 @@ export const forDeletionsByUser = (json) => {
     };
 }
 
-export const forCommitHistoryOfUser = (json) => {
+export const forCommitHistoryOfUser = (json, user) => {
     return {
         title: {
             text: 'User Commit History',
@@ -168,7 +168,7 @@ export const forCommitHistoryOfUser = (json) => {
         },
         series: [
             {
-                name: json[0].user,
+                name: user,
                 data: json.map((obj) => {
                     return obj.count;
                 }).reverse(),
