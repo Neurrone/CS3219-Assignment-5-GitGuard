@@ -50,7 +50,7 @@ def get_commits_for_user(owner, repo, user):
                 i = j;
                 count += 1;
         if (itrCount == i):
-            commit = {'date': commitDate, 'count': count};
+            commit = {'user': user, 'date': commitDate, 'count': count};
             commitList.append(commit);
         itrCount += 1;
 

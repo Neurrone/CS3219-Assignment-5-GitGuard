@@ -168,7 +168,7 @@ export const forCommitHistoryOfUser = (json) => {
         },
         series: [
             {
-                name: 'Commits',
+                name: json[0].user,
                 data: json.map((obj) => {
                     return obj.count;
                 }).reverse(),
@@ -192,4 +192,69 @@ export const modifyConfig = (config, start, end) => {
     config.series[0].data = newData;
 
     return config;
+}
+
+export const mergeConfig = (config1, config2) => {
+
+    // Update x-axis
+    var newCategories = [];
+    var newData1 = [];
+    var newData2 = [];
+    var len1 = config1.xAxis.categories.length;
+    var len2 = config2.xAxis.categories.length;
+    var itr1 = 0; 
+    var itr2 = 0;
+    
+    // Merging algorithm
+    while (itr1 < len1 && itr2 < len2) {
+        if (config1.xAxis.categories[itr1] == config2.xAxis.categories[itr2]) {
+            newCategories.push(config1.xAxis.categories[itr1]);
+            newData1.push(config1.series[0].data[itr1]);
+            newData2.push(config2.series[0].data[itr2]);
+            itr1++;
+            itr2++;
+        } else if (isEarlierThan(config1.xAxis.categories[itr1], config2.xAxis.categories[itr2])) {
+            newCategories.push(config1.xAxis.categories[itr1]);
+            newData1.push(config1.series[0].data[itr1]);
+            newData2.push(0);
+            itr1++;
+        } else {
+            newCategories.push(config2.xAxis.categories[itr2]);
+            newData1.push(0);
+            newData2.push(config2.series[0].data[itr2]);
+            itr2++;
+        }
+    }
+    //console.log(newData1);
+
+    while (itr1 < len1) {
+        newCategories.push(config1.xAxis.categories[itr1]);
+        newData1.push(config1.series[0].data[itr1]);
+        newData2.push(0);
+        itr1++;
+    }
+    while (itr2 < len2) {
+        newCategories.push(config2.xAxis.categories[itr2]);
+        newData1.push(0);
+        newData2.push(config2.series[0].data[itr2]);
+        itr2++;
+    }
+
+    var name1 = config1.series[0].name;
+    var name2 = config2.series[0].name;
+
+    config1.xAxis.categories = newCategories;
+    config1.series = [
+        {
+            name: name1,
+            data: newData1,
+        },
+        {
+            name: name2,
+            data: newData2,
+        },
+    ];
+
+    //console.log(config1);
+    return config1;
 }

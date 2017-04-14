@@ -23,6 +23,13 @@ class ContributionModal extends React.Component {
                                 onChange={this.props.toggleEndDate} />
                         </Col>
                     </Row>
+                    <Row>
+                        <Col sm='1'>
+                            <FormSelect options={this.props.allContributionSum.map(obj => ({value: obj.login, label: obj.login}))} 
+                                firstOption={'Select another user to compare activity with'} 
+                                onChange={this.props.submitModalCompare} />
+                        </Col>
+                    </Row>
                     <ReactHighcharts config={this.props.configList[4]}></ReactHighcharts>
                 </ModalBody>
                 <ModalFooter>

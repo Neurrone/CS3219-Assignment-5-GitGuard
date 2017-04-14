@@ -24,11 +24,14 @@ class StatsContainer extends React.Component {
             commitFileEnd: '',
 
             updatedModalUser: false,
+            updatedModalCompare: false,
             modalIsOpen: false,
             modalUser: '',
+            modalCompare: '',
 
             allContributionSum: [],
             allCommitsForUser: [],
+            allCommitsForCompare: [],
             allCommitsForFile: [],
             configList: [
                 {}, {}, {},
@@ -44,6 +47,13 @@ class StatsContainer extends React.Component {
                     // This one stores the config for the actual displayed
                     // graph, configList[3] stores data needed for the full
                     // graph
+                    xAxis: {
+                        categories: [],
+                    },
+                },
+                {
+                    // configList[5]
+                    // This one stores the config for the compared user
                     xAxis: {
                         categories: [],
                     },
@@ -64,6 +74,13 @@ class StatsContainer extends React.Component {
             updatedModalUser: true,
             modalIsOpen: !this.state.modalIsOpen,
             modalUser: login,
+        });
+    }
+
+    submitModalCompare(e) {
+        this.setState({
+            updatedModalCompare: true,
+            modalCompare: e,
         });
     }
 
@@ -102,6 +119,7 @@ class StatsContainer extends React.Component {
                 this.state.configList[3],
                 // Use JSON.parse(JSON.stringify()) to clone the object
                 configs.modifyConfig(JSON.parse(JSON.stringify(this.state.configList[3])), e, this.state.modalEnd),
+                this.state.configList[5],
             ],
         });
     }
@@ -115,6 +133,7 @@ class StatsContainer extends React.Component {
                 this.state.configList[2],
                 this.state.configList[3],
                 configs.modifyConfig(JSON.parse(JSON.stringify(this.state.configList[3])), this.state.modalStart, e),
+                this.state.configList[5],
             ],
         });
     }
@@ -135,6 +154,7 @@ class StatsContainer extends React.Component {
                             configs.forDeletionsByUser(json),
                             this.state.configList[3],
                             this.state.configList[4],
+                            this.state.configList[5],
                         ],
                     });
                     // Remove the class appending display:none and show the data
@@ -159,6 +179,30 @@ class StatsContainer extends React.Component {
                             this.state.configList[1],
                             this.state.configList[2],
                             configs.forCommitHistoryOfUser(json),
+                            configs.forCommitHistoryOfUser(json),
+                            this.state.configList[5],
+                        ],
+                    });
+                });
+        }
+
+        // Call the API for commits per day for comparison
+        // Only make this API call when modalUser has been set
+        if (this.state.updatedModalCompare) {
+            api.api(presets.allCommitsOfRepoForUser(this.props.owner, 
+                                                    this.props.repo,
+                                                    this.state.modalCompare), 
+                json => {
+                    this.setState({
+                        updatedModalCompare: false,
+                        allCommitsForCompare: json,
+                        configList: [
+                            this.state.configList[0],
+                            this.state.configList[1],
+                            this.state.configList[2],
+                            this.state.configList[3],
+                            // Generate a combined graph config
+                            configs.mergeConfig(JSON.parse(JSON.stringify(this.state.configList[3])), configs.forCommitHistoryOfUser(json)),
                             configs.forCommitHistoryOfUser(json),
                         ],
                     });
@@ -189,10 +233,12 @@ class StatsContainer extends React.Component {
                     allContributionSum={this.state.allContributionSum}
                     modalIsOpen={this.state.modalIsOpen}
                     modalUser={this.state.modalUser}
+                    allCommitsForCompare={this.state.allCommitsForCompare}
                     toggleModal={this.toggleModal.bind(this)}
                     toggleModalAndUser={this.toggleModalAndUser.bind(this)}
                     toggleStartDate={this.toggleStartDate.bind(this)}
-                    toggleEndDate={this.toggleEndDate.bind(this)}  />
+                    toggleEndDate={this.toggleEndDate.bind(this)}
+                    submitModalCompare={this.submitModalCompare.bind(this)}  />
                 <CommitFileContainer allCommitsForFile={this.state.allCommitsForFile} 
                     commitFilepath={this.state.commitFilepath} 
                     commitFileStart={this.state.commitFileStart}

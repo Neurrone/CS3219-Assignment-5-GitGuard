@@ -15,7 +15,10 @@ class ContributionContainer extends React.Component {
                     toggleModal={this.props.toggleModal}
                     configList={this.props.configList}
                     toggleStartDate={this.props.toggleStartDate}
-                    toggleEndDate={this.props.toggleEndDate} />
+                    toggleEndDate={this.props.toggleEndDate}
+                    allContributionSum={this.props.allContributionSum}
+                    allCommitsForCompare={this.props.allCommitsForCompare}
+                    submitModalCompare={this.props.submitModalCompare} />
             </div>
         );
     }
