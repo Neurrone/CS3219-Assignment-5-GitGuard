@@ -7,4 +7,4 @@
 ## Backend
 1. `cd backend`
 2. `pip install -t lib -r requirements.txt`
-3. `python main.py`
+3. `python main.py` or `python main.py -d` for more output
