@@ -23,7 +23,7 @@ app = Flask(__name__)
 flask_cors.CORS(app) # allow cross-origin requests (e.g. from frontend)
 
 class BadRequest(Exception):
-    status_code = 500
+    status_code = 400
 
     def __init__(self, message, status_code=None, payload=None, logger=None):
         Exception.__init__(self)
@@ -41,7 +41,7 @@ class BadRequest(Exception):
 
 class InvalidParametersError(BadRequest):
     def __init__(self, message):
-        BadRequest.__init__(self, message=message, status_code=400, logger=logging.info)
+        BadRequest.__init__(self, message=message, logger=logging.info)
 
 class InvalidRepoError(BadRequest):
     def __init__(self):
