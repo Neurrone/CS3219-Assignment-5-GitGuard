@@ -98,5 +98,3 @@ ENV/
 /utils/auth.js
 
 secrets.py
-backend/secrets.py
-backend/repos/
