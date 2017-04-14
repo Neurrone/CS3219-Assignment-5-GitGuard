@@ -51,7 +51,7 @@ def get_author_contributions(owner, repo, start_time=None):
                 a += week['a']
                 d += week['d']
                 c += week['c']
-        author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c, url:author_url}
+        author = {'login': authorName, 'additions':a, 'deletions':d, 'commits':c, 'url':author_url}
         authorList.append(author)
     return authorList
 
