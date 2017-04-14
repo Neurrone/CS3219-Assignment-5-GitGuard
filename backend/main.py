@@ -62,5 +62,12 @@ def get_commit_history(owner, repo, login):
 
     return jsonify(author_commit_history);
 
+@app.route('/<owner>/<repo>/clone', methods=['GET'])
+def clone_repo(owner, repo):
+    import git_api
+    git_api.clone_repo(owner, repo)
+
+    return jsonify({})
+
 if __name__ == "__main__":
     app.run()
