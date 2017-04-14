@@ -11,7 +11,7 @@ from secrets import GIT_USER, GIT_TOKEN
 def make_request(url_without_github_prefix):
     """Makes a request to a github url using a github API key for higher rate limits.
     Url should be specified without the "https://api.github.com/" prefix.
-    Returns: the result as a  dictionary
+    Returns: the result as a  dictionary, raises ValueError if a 404 is encountered.
     """
     headers = {'Authorization': 'token %s' % GIT_TOKEN}
     url = 'https://api.github.com/' + url_without_github_prefix
@@ -30,7 +30,10 @@ def make_request(url_without_github_prefix):
 
         retry_count += 1
 
-    return r.json()
+    if r.status_code == 404:
+        raise ValueError('Invalid  repository url')
+    else:
+        return r.json()
 
 def get_author_contributions(owner, repo, start_time=None):
     """Returns the number of additions, commits and deletions for each author, and the author's profile page, starting from an optional timestamp."""
