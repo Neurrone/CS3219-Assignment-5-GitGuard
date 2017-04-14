@@ -2,8 +2,7 @@ import git
 import os, sys
 import logging
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def get_remote_url(owner, repo):
     return 'https://github.com/{}/{}.git'.format(owner, repo)
@@ -14,7 +13,7 @@ def get_repo_path(owner, repo):
 def sync_repo(owner, repo):
     repo = git.Repo(get_repo_path(owner, repo))
 
-    logging.info('Existing repo found; syncing...')
+    logger.info('Existing repo found; syncing...')
     repo.heads.master.checkout()
     repo.remotes.origin.fetch()
     repo.git.reset('--hard', 'origin/master')
@@ -26,13 +25,13 @@ def clone_repo(owner, repo):
     try:
         return git.Repo.clone_from(get_remote_url(owner, repo), get_repo_path(owner, repo), branch='master')
     except:
-        logging.info('Could not clone repo. Is it valid?')
+        logger.info('Could not clone repo. Is it valid?')
         return None
 
 def prepare_repo(owner, repo):
     try:
-        logging.info('Checking for existing repo')
+        logger.info('Checking for existing repo')
         return sync_repo(owner, repo)
     except:
-        logging.info('No existing repo found; cloning...')
+        logger.info('No existing repo found; cloning...')
         return clone_repo(owner, repo)
