@@ -142,5 +142,51 @@ def get_commits(owner, repo):
 def get_sum_contribution(owner, repo):
     return jsonify(github_api.get_author_contributions(owner, repo))
 
+@app.route('/<owner>/<repo>/lines', methods=['GET'])
+def get_lines(owner, repo):
+    import git_api
+    from git.exc import GitCommandError
+    import re
+
+    repo = git_api.prepare_repo(owner, repo)
+    if not repo:
+        return jsonify('TODO: error')
+
+    filenames = repo.git.ls_files().split('\n')
+    counts = {}
+    name_mail_map = {}
+    for filename in filenames:
+        try:
+            git_output = repo.git.blame('--line-porcelain', filename)
+        except GitCommandError as e:
+            logging.warning('Could not git blame %s; skipping...', filename)
+            continue
+
+        lines = git_output.split('\n')
+        for i in range(len(lines)):
+            line = lines[i]
+            if not re.search('^author-mail ', line):
+                continue
+
+            mail = line[12:].strip().lower().lstrip('<').rstrip('>')
+            if counts.get(mail) == None:
+                counts[mail] = 1
+                name_mail_map[mail] = lines[i - 1][7:].strip()
+            else:
+                counts[mail] += 1
+
+    output = []
+    for mail, count in counts.iteritems():
+        name = name_mail_map[mail]
+        output.append({
+            'name': name,
+            'count': count,
+            'email': mail
+        })
+
+    output.sort(key=lambda k: k['count'], reverse=True)
+
+    return jsonify(output)
+
 if __name__ == "__main__":
     app.run()
