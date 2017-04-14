@@ -22,6 +22,33 @@ import github_api
 app = Flask(__name__)
 flask_cors.CORS(app) # allow cross-origin requests (e.g. from frontend)
 
+class BadRequest(Exception):
+    status_code = 400
+
+    def __init__(self, message, status_code=None, payload=None, logger=None):
+        Exception.__init__(self)
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+        if logger:
+            logger(message)
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
+
+class GgError(BadRequest):
+    def __init__(self, message):
+        BadRequest.__init__(self, message=message, logger=logging.warning)
+
+@app.errorhandler(BadRequest)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
 @app.route("/")
 def splash():
     return "GG backend running..."
@@ -61,17 +88,32 @@ def get_commits_for_file(owner, repo, file, start=None, end=None):
     from git.exc import GitCommandError
     import re
 
-    repo = git_api.prepare_repo(owner, repo)
-    if not repo:
-        return jsonify('TODO: error')
-
     args = ["--format=%H%n%ai%n%an <%ae>%n%s%n%H_DIFF_START"]
 
     if start:
+        if not start.isdigit() or not end.isdigit():
+            raise GgError('Invalid line range: line numbers must be digits')
+
+        try:
+            start = int(start)
+            end = int(end)
+        except:
+            raise GgError('Invalid line range: line numbers must be integers')
+
+        if start <= 0:
+            raise GgError('Invalid line range: line numbers must be positive')
+
+        if end < start:
+            raise GgError('Invalid line range: end must not be before start')
+
         args.append('-L {},{}:{}'.format(start, end, file))
     else:
         args.append('-p')
         args.append(file)
+
+    repo = git_api.prepare_repo(owner, repo)
+    if not repo:
+        raise GgError('Error preparing local repo')
 
     try:
         git_output = repo.git.log(*args)
@@ -79,7 +121,12 @@ def get_commits_for_file(owner, repo, file, start=None, end=None):
         # f.write(git_output.encode('utf8'))
         # f.close()
     except GitCommandError as e:
-        return jsonify('TODO: error: ' + str(e).split('\n')[-1])
+        e_msg = str(e)
+        e_msg_last_line = e_msg.split('\n')[-1]
+        if 'file {} has only '.format(file) in e_msg_last_line:
+            line_count = [int(s) for s in e_msg_last_line.split() if s.isdigit()][0]
+            raise GgError('Invalid line range: file only has {} lines'.format(line_count))
+        raise GgError('Error running git log: ' + e_msg_last_line)
 
     lines = git_output.split('\n')
     commit_start_locations = []
@@ -130,12 +177,12 @@ def get_commits(owner, repo):
     start = request.args.get('start')
     end = request.args.get('end')
     if file:
-        if start and end and start.isdigit() and end.isdigit():
-            return get_commits_for_file(owner, repo, file, start=int(start), end=int(end))
+        if start and end:
+            return get_commits_for_file(owner, repo, file, start=start, end=end)
         else:
             return get_commits_for_file(owner, repo, file)
 
-    return jsonify('TODO: error')
+    raise GgError('Please specify user or file params')
 
 # sums up the total contributions (additions, deletions and commits) for all contributors
 @app.route('/<owner>/<repo>/sum_contribution', methods=['GET'])
@@ -150,7 +197,7 @@ def get_lines(owner, repo):
 
     repo = git_api.prepare_repo(owner, repo)
     if not repo:
-        return jsonify('TODO: error')
+        raise GgError('Error preparing local repo')
 
     filenames = repo.git.ls_files().split('\n')
     counts = {}
