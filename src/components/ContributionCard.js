@@ -52,7 +52,7 @@ class ContributionCard extends React.Component {
                     </Col>
                 </Row>
                 <div className='back-top'>
-                    <a href='#card-input'>To Top</a>
+                    <a href='#top'>To Top</a>
                 </div>
             </Card>
         );

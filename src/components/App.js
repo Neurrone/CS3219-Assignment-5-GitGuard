@@ -51,11 +51,11 @@ class App extends React.Component {
     render() {
         return (
             <div>
+                <LandingCard />
+
                 <InputBar link={this.state.link} 
                     onLinkChange={this.updateStateLink.bind(this)} 
                     onLinkSubmit={this.submitRepoLink.bind(this)} />
-                
-                <LandingCard />
 
                 <StatsContainer submit={this.state.submit}
                     owner={this.state.owner}
